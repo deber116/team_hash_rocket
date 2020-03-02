@@ -50,5 +50,5 @@ end
 50.times do |i|
     pokemon_name, pokemon_type = get_pokemon_data(i+1)  
     type = Type.find_or_create_by(name: pokemon_type)
-    Pokemon.create(name: pokemon_name, type: type)
+    Pokemon.create(name: pokemon_name.upcase, type: type)
 end
