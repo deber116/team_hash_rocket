@@ -16,8 +16,4 @@ name = gets.chomp
 
 t = Trainer.create(name: name)
 
-def game_loop(me)
-    puts "#{me.name}, are you ready? "
-end
-
 game_loop(t)
