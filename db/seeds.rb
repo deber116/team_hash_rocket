@@ -1,56 +1,56 @@
-require 'open-uri'
 require 'net/http'
+require 'open-uri'
 require 'json'
 require_relative '../config/environment.rb'
 
-#API_BASE = "https://pokeapi.co/"
-
-
-#url = API_BASE + 
-#uri = URI.parse(url)
-
-Trainer.destroy_all
-Pokemon.destroy_all
-Type.destroy_all
-TrainedPokemon.destroy_all
-
-# elec = Type.create(name: "electric")
-# pikachu = Pokemon.create(name: "Pikachu",type: elec)
-# ash = Trainer.create(name: "Ash")
-
-# trained = TrainedPokemon.create(nickname: "testy", pokemon: pikachu, trainer: ash)
-
-
-# --- NEW CODE ---
 
 API_BASE = 'https://pokeapi.co/api/v2/'
 
 
-def get_pokemon_data(pokemon_id)
-    
-    uri = URI.parse(API_BASE + "pokemon/#{pokemon_id}")
+def get_evolutions(evolution_chain_id)
+    uri = URI.parse(API_BASE + "evolution-chain/#{evolution_chain_id}")
     response = Net::HTTP.get_response(uri)
     
     # TODO: Validate that the request was successful
     
     data = JSON.parse(response.body)
 
-    # Extract the pokemon's name
-    pokemon_name = data['name']
+    # Extract the chain base pokemon's name and call for type
+    base_pokemon_name = data['chain']['species']['name']
 
-    # Get the first 'type' hash, and extact that type's name
-    first_type = data['types'].find { |type| type['slot'] == 1 }
-    pokemon_type = first_type['type']['name']
+    get_base_pokemon = URI.parse(API_BASE + "pokemon/#{base_pokemon_name}")
 
-    return pokemon_name, pokemon_type
+    base_pokemon_response = Net::HTTP.get_response(get_base_pokemon)
+    base_pokemon_data = JSON.parse(base_pokemon_response.body)
+
+    base_pokemon_first_type = base_pokemon_data['types'].find { |type| type['slot'] == 1 }
+    base_pokemon_type = base_pokemon_first_type['type']['name']
+
+    #create type instance for pokemon in evolution chain and a base pokemon instance
+    chain_type = Type.find_or_create_by(name: base_pokemon_type)
+    base_pokemon = Pokemon.create(name: base_pokemon_name, type: chain_type)
+    chain = data['chain']['evolves_to']
+    if chain[0]
+        base_pokemon.next_evolution_id = base_pokemon.id + 1
+        base_pokemon.save
+    end
+
+    until chain[0] == nil
+        evolved_pokemon_name = chain[0]['species']['name']
+        evolved_pokemon = Pokemon.create(name: evolved_pokemon_name, type: chain_type)
+        chain = chain[0]['evolves_to']
+        if chain[0]
+            evolved_pokemon.next_evolution_id = evolved_pokemon.id + 1
+            evolved_pokemon.save
+        end
+    end
 
 end
 
 
-50.times do |i|
-    pokemon_name, pokemon_type = get_pokemon_data(i+1)  
-    type = Type.find_or_create_by(name: pokemon_type)
-    Pokemon.create(name: pokemon_name.upcase, type: type)
+
+5.times do |i|
+    get_evolutions(i + 1)
 end
 
 def get_move_data

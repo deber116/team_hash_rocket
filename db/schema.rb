@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 5) do
 
   create_table "pokemons", force: :cascade do |t|
     t.string "name"
     t.integer "type_id"
+    t.integer "next_evolution_id"
   end
 
   create_table "trained_pokemons", force: :cascade do |t|
