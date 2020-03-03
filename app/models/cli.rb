@@ -1,3 +1,3 @@
-def game_loop(me)
-    puts "#{me.name}, are you ready? "
+def game_loop(trainer)
+    
 end
