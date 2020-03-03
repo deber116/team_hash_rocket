@@ -18,7 +18,7 @@ name = $prompt.ask("Now, what did you say your name was? =>") { |q| q.modify :co
 trainer = Trainer.find_or_create_by(name: name)
 
 # Ask the trainer what action they would like to take
-choices = ["Look for wild pokemon", "List all pokemon","View your team of pokemon"]
+choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon"]
 selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
 
 if selection == "Look for wild pokemon"
@@ -32,8 +32,8 @@ if selection == "Look for wild pokemon"
         puts "The pokemon got away!"
     end
 
-elsif selection == 2
+elsif selection == "List all pokemon"
     Pokemon.list_all
-else selection == 3
+else selection == "View your team of pokemon"
     trainer.list_team
 end
