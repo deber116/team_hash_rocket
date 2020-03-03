@@ -38,9 +38,10 @@ if selection == 1
         puts "You idiot"
     end
 
-# elsif selection == 2
-    # TODO
-
+elsif selection == 2
+    Pokemon.list_all
+else selection == 3
+    trainer.list_team
 end
 
 binding.pry

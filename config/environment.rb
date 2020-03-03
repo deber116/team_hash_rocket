@@ -8,4 +8,4 @@ require_all 'lib'
 require_all 'app/models'
 
 # Added to disable DEBUG level logging (e.g. SQL statements)
-# ActiveRecord::Base.logger = nil
+ ActiveRecord::Base.logger = nil
