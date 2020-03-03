@@ -45,7 +45,6 @@ def get_evolutions(evolution_chain_id)
         end
     end
 
-binding.pry
 end
 
 
