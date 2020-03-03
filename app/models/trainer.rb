@@ -35,11 +35,10 @@ class Trainer < ActiveRecord::Base
     end
 
     def list_team
-        i = 1
         self.trained_pokemons.reset
-        self.trained_pokemons.each do |tp|
-            puts "#{i}.) #{tp})"
-            i += 1
+        self.trained_pokemons.each_with_index do |trained_pokemon, i|
+            puts "#{i+1}. #{trained_pokemon}"
         end
     end
 end
+

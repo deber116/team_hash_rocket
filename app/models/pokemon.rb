@@ -4,8 +4,12 @@ class Pokemon < ActiveRecord::Base
     belongs_to :type
 
     def self.list_all
-        Pokemon.all.each do |poke|
-            puts "species: #{poke.name.upcase}, type: #{poke.type.name.upcase}"
+        Pokemon.all.each_with_index do |pokemon, i|
+            puts "#{i+1}. #{pokemon}"
         end
+    end
+
+    def to_s
+        "#{self.name.upcase} (type: #{self.type.name.upcase})"
     end
 end
