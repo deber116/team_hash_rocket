@@ -32,7 +32,8 @@ if selection == "Look for wild pokemon"
         puts "The pokemon got away!"
     end
 
-# elsif selection == 2
-    # TODO
-
+elsif selection == 2
+    Pokemon.list_all
+else selection == 3
+    trainer.list_team
 end

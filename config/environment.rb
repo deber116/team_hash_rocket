@@ -10,4 +10,3 @@ require_all 'app/models'
 
 # Added to disable DEBUG level logging (e.g. SQL statements)
  ActiveRecord::Base.logger = nil
-
