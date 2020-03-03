@@ -9,33 +9,27 @@ Some people play with POKEMON, some battle with them."
 
 puts "\nBut we don't know everything about POKEMON yet. There are still
 many mysteries to solve. That's why I study POKEMON every day."
+puts ''
 
-puts "\nNow, what did you say your name was?"
+# Get the Trainer's name. Convert their input to Title Case (e.g. "eLlis aNdReWs" --> "Ellis Andrews")
+name = $prompt.ask("Now, what did you say your name was? =>") { |q| q.modify :collapse, :trim, :down }.titleize 
 
-name = gets.chomp
-
+# Find an existing trainer or create a new one if none exists in the database
 trainer = Trainer.find_or_create_by(name: name)
 
-puts "#{trainer.name}, what would you like to do now?"
-puts %q(
-Your options are:
-    1. Look for pokemon
-    2. List all pokemon
-    3. View your team of pokemon
-)
-puts "(Enter the number of the option you'd like)"
-selection = gets.chomp.to_i
+# Ask the trainer what action they would like to take
+choices = ["Look for wild pokemon", "List all pokemon","View your team of pokemon"]
+selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
 
-if selection == 1
+if selection == "Look for wild pokemon"
     # Return a random pokemon from the db
     pokemon = Pokemon.all.sample
-    puts "A wild #{pokemon.name} appeared! Do you want to catch it? (y/n)"
-    response = gets.chomp
+    response = $prompt.yes?("A wild #{pokemon.name} appeared! Do you want to catch it?")
 
-    if response == 'y' || response == 'yes'
+    if response == true
         trainer.catch(pokemon)
     else
-        puts "You idiot"
+        puts "The pokemon got away!"
     end
 
 elsif selection == 2
@@ -43,5 +37,3 @@ elsif selection == 2
 else selection == 3
     trainer.list_team
 end
-
-binding.pry
