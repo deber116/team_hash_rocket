@@ -1,3 +1,6 @@
+ENV['SINATRA_ENV'] ||= "development"
+
+
 require 'bundler'
 Bundler.require
 
