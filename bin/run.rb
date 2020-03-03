@@ -17,23 +17,27 @@ name = $prompt.ask("Now, what did you say your name was? =>") { |q| q.modify :co
 # Find an existing trainer or create a new one if none exists in the database
 trainer = Trainer.find_or_create_by(name: name)
 
-# Ask the trainer what action they would like to take
-choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon"]
-selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
+while true do
+    # Ask the trainer what action they would like to take
+    choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon","Quit"]
+    selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
 
-if selection == "Look for wild pokemon"
-    # Return a random pokemon from the db
-    pokemon = Pokemon.all.sample
-    response = $prompt.yes?("A wild #{pokemon.name} appeared! Do you want to catch it?")
+    if selection == "Look for wild pokemon"
+        # Return a random pokemon from the db
+        pokemon = Pokemon.all.sample
+        response = $prompt.yes?("A wild #{pokemon.name} appeared! Do you want to catch it?")
 
-    if response == true
-        trainer.catch(pokemon)
+        if response == true
+            trainer.catch(pokemon)
+        else
+            puts "The pokemon got away!"
+        end
+
+    elsif selection == "List all pokemon"
+        Pokemon.list_all
+    elsif selection == "View your team of pokemon"
+        trainer.list_team
     else
-        puts "The pokemon got away!"
+        break
     end
-
-elsif selection == "List all pokemon"
-    Pokemon.list_all
-else selection == "View your team of pokemon"
-    trainer.list_team
 end
