@@ -52,3 +52,17 @@ end
     type = Type.find_or_create_by(name: pokemon_type)
     Pokemon.create(name: pokemon_name.upcase, type: type)
 end
+
+def get_move_data
+    uri = URI.parse(API_BASE + "pokemon/1")
+    response = Net::HTTP.get_response(uri)
+
+    data = JSON.parse(response.body)
+
+    move_list = data["moves"]
+    move_list = move_list.map do |move|
+        move["move"]["name"]
+    end
+
+    
+end
