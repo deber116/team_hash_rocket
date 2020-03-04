@@ -3,80 +3,124 @@ require 'open-uri'
 require 'json'
 require_relative '../config/environment.rb'
 
-Pokemon.destroy_all
-Type.destroy_all
+
+# TODO: Add sleep statments due to rate-limit API!
+
+# Destroy all data in the database
+models = [
+    Move,
+    PokemonMove,
+    Pokemon,
+    TrainedPokemonMove,
+    TrainedPokemon,
+    Trainer,
+    Type
+]
+
+models.each { |model| model.destroy_all }
+
 
 API_BASE = 'https://pokeapi.co/api/v2/'
 
-def get_pokemon_info(name)
-    uri = URI.parse(API_BASE + "pokemon/#{name}")
-    response = Net::HTTP.get_response(uri)
-    data = JSON.parse(response.body)
-end
 
-def get_move_data(pokemon_data)
-    move_list = pokemon_data["moves"]
-    move_list = move_list.map do |move|
-        move["move"]["name"]
+def validate_api_response(response)
+    # Validate that an API request was successful
+    case response
+    when Net::HTTPSuccess then
+        response
+    else
+        raise response.value
     end
-    
 end
 
-def get_evolutions(evolution_chain_id)
+
+def get_pokemon_data(pokemon_name)
+    # Make a request to the pokemon's endpoint
+    uri = URI.parse(API_BASE + "pokemon/#{pokemon_name}")
+    response = Net::HTTP.get_response(uri)
+
+    # Check that the request was successful
+    response = validate_api_response(response)
+
+    # Return the parsed response body (a hash)
+    JSON.parse(response.body)
+end
+
+
+def get_evolution_chain_data(evolution_chain_id)
+    # Make a request to the evolution chain's endpoint
     uri = URI.parse(API_BASE + "evolution-chain/#{evolution_chain_id}")
     response = Net::HTTP.get_response(uri)
     
-    # TODO: Validate that the request was successful
+    # Check that the request was successful
+    response = validate_api_response(response)
     
-    data = JSON.parse(response.body)
-
-    # Extract the chain base pokemon's name and call for type
-    base_pokemon_name = data['chain']['species']['name']
-    base_pokemon_data = get_pokemon_info(base_pokemon_name)
-    
-    #getting move data for base_pokemon_name
-    move_data = get_move_data(base_pokemon_data)
-    #PENDING: Above method does not yet seed data to move tables
-
-    
-
-    base_pokemon_first_type = base_pokemon_data['types'].find { |type| type['slot'] == 1 }
-    base_pokemon_type = base_pokemon_first_type['type']['name']
-
-    #create type instance for pokemon in evolution chain and a base pokemon instance
-    chain_type = Type.find_or_create_by(name: base_pokemon_type)
-    base_pokemon = Pokemon.create(name: base_pokemon_name, type: chain_type)
-    chain = data['chain']['evolves_to']
-
-    move_data.each do |move|
-        new_move = Move.find_or_create_by(name: move)
-        base_pokemon.moves << new_move
-    end
-
-    if chain[0]
-        base_pokemon.next_evolution_id = base_pokemon.id + 1
-        base_pokemon.save
-    end
-
-    until chain[0] == nil
-        evolved_pokemon_name = chain[0]['species']['name']
-        
-        #ANOTHER API REQUEST: Getting move data for evolved pokemon
-        get_move_data(get_pokemon_info(evolved_pokemon_name))
-        #PENDING: Above method does not yet seed move tables
-        
-        evolved_pokemon = Pokemon.create(name: evolved_pokemon_name, type: chain_type)
-        chain = chain[0]['evolves_to']
-        if chain[0]
-            evolved_pokemon.next_evolution_id = evolved_pokemon.id + 1
-            evolved_pokemon.save
-        end
-    end
+    # Return the parsed response body (a hash)
+    JSON.parse(response.body)
 end
 
 
+def add_pokemon_to_database(pokemon_name, previous_evolution)
+    # Function takes a pokemon name string and previous_evolution Pokemon
 
-5.times do |i|
-    get_evolutions(i + 1)
+    # Make and API request for the pokemon, and use that to create Pokemon, Type, and Move objects
+    pokemon_data = get_pokemon_data(pokemon_name)
+
+    # Extract the name of the first of the pokemon's types, and add a Type to the DB if it doesn't already exist
+    first_type = pokemon_data['types'].find { |type| type['slot'] == 1 }
+    first_type_name = first_type['type']['name']
+    type = Type.find_or_create_by(name: first_type_name)
+
+    # Extract the pokemon's name, and add a Pokemon to the DB
+    pokemon_name = pokemon_data['name']
+    pokemon = Pokemon.create(name: pokemon_name, type: type, previous_evolution: previous_evolution)
+
+    # Extract the moves, and add them to the DB along with a PokemonMove associating them with the Pokemon
+    pokemon_moves = pokemon_data['moves']
+    pokemon_moves.each do |pokemon_move|
+
+        # Add a Move to the DB if it doesn't already exist
+        move_name = pokemon_move['move']['name']
+        move = Move.find_or_create_by(name: move_name)
+        
+        # Add a PokemonMove to the DB associating the Pokemon with the Move
+        PokemonMove.create(pokemon: pokemon, move: move)
+    end
+    pokemon
 end
 
+
+def recursively_process_evolution_chain(evolution_chain, previous_evolution=nil)
+    # Function takes an `evolution_chain` hash and a `previous_evolution` Pokemon and processes it to completion
+
+    # Extract the pokemon's name string
+    pokemon_name = evolution_chain['species']['name']  
+    
+    # Create Pokemon, Type, and Move objects for the Pokemon
+    pokemon = add_pokemon_to_database(pokemon_name, previous_evolution)
+
+    # Extract the evolves to array of hashes
+    evolves_to = evolution_chain['evolves_to']
+    
+    # Iterate through each evolution chain in the `evolves_to` array
+    evolves_to.each { |chain| recursively_process_evolution_chain(chain, pokemon) }
+end
+
+
+def add_pokemon_data_by_evolution_chain_id(evolution_chain_id)
+
+    # Make and API request for the evolution chain
+    evolution_chain_data = get_evolution_chain_data(evolution_chain_id)
+
+    # Extract the top-level chain (a hash)
+    top_level_chain = evolution_chain_data['chain']
+
+    # Recursively process the top-level chain and all sub-chains
+    recursively_process_evolution_chain(top_level_chain)
+end
+
+
+100.times do |i| 
+    add_pokemon_data_by_evolution_chain_id(i + 1) 
+    sleep(2)  # Sleep 2 seconds to avoid going over our API request rate limit. This is approximate!
+end
