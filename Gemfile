@@ -9,3 +9,6 @@ gem "require_all"
 gem "faker"
 gem 'rake'
 gem 'tty-prompt'
+gem 'graphql'
+gem 'graphql-batch'
+gem 'graphql-client'
