@@ -40,5 +40,22 @@ class Trainer < ActiveRecord::Base
             puts "#{i+1}. #{trained_pokemon}"
         end
     end
+
+    #returns the team array without puts-ing it
+    def get_team
+        self.trained_pokemons.reset
+        self.trained_pokemons.map do |tp|
+            "#{tp}"
+        end
+    end
+
+    def get_team_choices_hash
+        result = {}
+        self.trained_pokemons.each_with_index do |tp, i|
+            result[tp] = i
+        end
+        result
+    end
 end
+
 

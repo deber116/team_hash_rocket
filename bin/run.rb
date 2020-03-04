@@ -19,7 +19,7 @@ trainer = Trainer.find_or_create_by(name: name)
 
 while true do
     # Ask the trainer what action they would like to take
-    choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon","Quit"]
+    choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have","Quit"]
     selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
 
     if selection == "Look for wild pokemon"
@@ -37,6 +37,29 @@ while true do
         Pokemon.list_all
     elsif selection == "View your team of pokemon"
         trainer.list_team
+    elsif selection == "Teach moves to pokemon on your team"
+        if trainer.get_team.count == 0
+            puts "You don't have any members on your team yet. Go catch some pokemon!"
+
+        else
+            p_selection = $prompt.select("Which pokemon on your team would you like to teach a move?", trainer.get_team_choices_hash)
+            t_pokemon = trainer.trained_pokemons[p_selection]
+
+            if t_pokemon.trained_moves.count == 4
+                puts "That pokemon already knows 4 moves. You can't teach it anymore"
+            else 
+                move_names = t_pokemon.get_moves_names.first(10) - t_pokemon.trained_moves_names
+                binding.pry
+                result = {}
+                move_names.each_with_index {|name, i| result[name] = i }
+                
+                result_index = $prompt.select("Which move would you like to teach this pokemon?", result)
+                selected_move = t_pokemon.pokemon.moves.first(10)[result_index]
+                t_pokemon.add_move(selected_move) 
+            end
+        end
+    elsif selection == "Check what moves your pokemon have"
+        
     else
         break
     end
