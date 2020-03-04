@@ -20,28 +20,42 @@ models = [
 models.each { |model| model.destroy_all }
 
 
-
 API_BASE = 'https://pokeapi.co/api/v2/'
 
 
+def validate_api_response(response)
+    # Validate that an API request was successful
+    case response
+    when Net::HTTPSuccess then
+        response
+    else
+        raise response.value
+    end
+end
+
+
 def get_pokemon_data(pokemon_name)
+    # Make a request to the pokemon's endpoint
     uri = URI.parse(API_BASE + "pokemon/#{pokemon_name}")
     response = Net::HTTP.get_response(uri)
-    
-    # TODO: Validate that the response was successful
-    
+
+    # Check that the request was successful
+    response = validate_api_response(response)
+
     # Return the parsed response body (a hash)
     JSON.parse(response.body)
 end
 
 
 def get_evolution_chain_data(evolution_chain_id)
-    # Make evolution chain request
+    # Make a request to the evolution chain's endpoint
     uri = URI.parse(API_BASE + "evolution-chain/#{evolution_chain_id}")
     response = Net::HTTP.get_response(uri)
     
-    # TODO: Validate that the request was successful
+    # Check that the request was successful
+    response = validate_api_response(response)
     
+    # Return the parsed response body (a hash)
     JSON.parse(response.body)
 end
 
@@ -106,4 +120,7 @@ def add_pokemon_data_by_evolution_chain_id(evolution_chain_id)
 end
 
 
-5.times { |i| add_pokemon_data_by_evolution_chain_id(i + 1) }
+100.times do |i| 
+    add_pokemon_data_by_evolution_chain_id(i + 1) 
+    sleep(2)  # Sleep 2 seconds to avoid going over our API request rate limit. This is approximate!
+end
