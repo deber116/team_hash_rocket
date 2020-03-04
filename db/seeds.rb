@@ -46,8 +46,8 @@ def get_evolution_chain_data(evolution_chain_id)
 end
 
 
-def add_pokemon_to_database(pokemon_name)
-    # Function takes a pokemon name string
+def add_pokemon_to_database(pokemon_name, previous_evolution)
+    # Function takes a pokemon name string and previous_evolution Pokemon
 
     # Make and API request for the pokemon, and use that to create Pokemon, Type, and Move objects
     pokemon_data = get_pokemon_data(pokemon_name)
@@ -59,7 +59,7 @@ def add_pokemon_to_database(pokemon_name)
 
     # Extract the pokemon's name, and add a Pokemon to the DB
     pokemon_name = pokemon_data['name']
-    pokemon = Pokemon.create(name: pokemon_name, type: type)
+    pokemon = Pokemon.create(name: pokemon_name, type: type, previous_evolution: previous_evolution)
 
     # Extract the moves, and add them to the DB along with a PokemonMove associating them with the Pokemon
     pokemon_moves = pokemon_data['moves']
@@ -76,20 +76,20 @@ def add_pokemon_to_database(pokemon_name)
 end
 
 
-def recursively_process_evolution_chain(evolution_chain)
-    # Function takes an `evolution_chain` hash and processes it to completion
+def recursively_process_evolution_chain(evolution_chain, previous_evolution=nil)
+    # Function takes an `evolution_chain` hash and a `previous_evolution` Pokemon and processes it to completion
 
     # Extract the pokemon's name string
     pokemon_name = evolution_chain['species']['name']  
     
     # Create Pokemon, Type, and Move objects for the Pokemon
-    pokemon = add_pokemon_to_database(pokemon_name)
+    pokemon = add_pokemon_to_database(pokemon_name, previous_evolution)
 
     # Extract the evolves to array of hashes
     evolves_to = evolution_chain['evolves_to']
     
     # Iterate through each evolution chain in the `evolves_to` array
-    evolves_to.each { |chain| recursively_process_evolution_chain(chain) }
+    evolves_to.each { |chain| recursively_process_evolution_chain(chain, pokemon) }
 end
 
 
