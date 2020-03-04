@@ -19,7 +19,7 @@ trainer = Trainer.find_or_create_by(name: name)
 
 while true do
     # Ask the trainer what action they would like to take
-    choices = ["Look for wild pokemon", "List all pokemon", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have","Quit"]
+    choices = ["Look for wild pokemon", "View Pokedex", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have","Quit"]
     selection = $prompt.select("#{trainer.name}, what would you like to do now?", choices)
 
     if selection == "Look for wild pokemon"
@@ -33,8 +33,19 @@ while true do
             puts "The pokemon got away!"
         end
 
-    elsif selection == "List all pokemon"
-        Pokemon.list_all
+    elsif selection == "View Pokedex"
+
+        pokedex_commands = ["List all pokemon", "View pokemon by type"]
+        command = $prompt.select("What would you like to check on your Pokedex?", pokedex_commands)
+        if command == "List all pokemon"
+            Pokemon.list_all
+        elsif command == "View pokemon by type"
+            types = Type.list_types_by_name
+            type_str = $prompt.select("Which type would you like to view?", types)
+            type = Type.find_by(name: type_str)
+            Pokemon.list_all_by_type(type)
+        end
+
     elsif selection == "View your team of pokemon"
         trainer.list_team
     elsif selection == "Teach moves to pokemon on your team"
@@ -49,7 +60,6 @@ while true do
                 puts "That pokemon already knows 4 moves. You can't teach it anymore"
             else 
                 move_names = t_pokemon.get_moves_names.first(10) - t_pokemon.trained_moves_names
-                binding.pry
                 result = {}
                 move_names.each_with_index {|name, i| result[name] = i }
                 

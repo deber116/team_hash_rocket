@@ -16,4 +16,10 @@ class Pokemon < ActiveRecord::Base
     def to_s
         "#{self.name.upcase} (type: #{self.type.name.upcase})"
     end
+
+    def self.list_all_by_type(type)
+        of_type = Pokemon.all.select { |pokemon| pokemon.type == type }
+        puts "All #{type.name} type Pokemon:"
+        of_type.each { |pokemon| puts "     #{pokemon.name}" }
+    end
 end

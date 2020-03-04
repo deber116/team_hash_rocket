@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 8) do
   create_table "pokemons", force: :cascade do |t|
     t.string "name"
     t.integer "type_id"
-    t.integer "previous_evolution_id"
+    t.integer "next_evolution_id"
   end
 
   create_table "trained_pokemon_moves", force: :cascade do |t|
