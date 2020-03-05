@@ -26,9 +26,9 @@ def game_loop(trainer)
             # If none can evolve, let them know that.
             evolvable_pokemon = trainer.get_evolvable_team_members
             if evolvable_pokemon.length == 0
-                puts "None of the pokemon on your team can evolve. Go catch some new pokemon!"
+                puts "None of the pokemon on your team can evolve. Go catch some new pokemon!".yellow
             else
-                tp_to_evolve = $prompt.select("Which of your pokemon would you like to evolve?", evolvable_pokemon + ['None'])
+                tp_to_evolve = $prompt.select("Which of your pokemon would you like to evolve?".yellow, evolvable_pokemon + ['None'])
                 if tp_to_evolve == 'None'
                     next  # If they actually don't want to evolve any, just continue on.
                 end
@@ -38,7 +38,7 @@ def game_loop(trainer)
                 
                 # If there is more than one option, have the trainer select the evolution they want
                 if next_evolutions.length > 1
-                    next_evolution = $prompt.select("Which evolution?", next_evolutions + ['None'])
+                    next_evolution = $prompt.select("Which evolution?".yellow, next_evolutions + ['None'])
                     if next_evolution == 'None'
                         next  # If they actually don't want to evolve it, just continue on.
                     end
@@ -49,7 +49,7 @@ def game_loop(trainer)
                 # Evolve their pokemon and save it
                 tp_to_evolve.pokemon = next_evolution
                 tp_to_evolve.save
-                puts "Congrats! #{tp_to_evolve.nickname} evolved into #{next_evolution.name.upcase}!" 
+                puts "Congrats! #{tp_to_evolve.nickname} evolved into #{next_evolution.name.upcase}!".green
             end
         
         else
@@ -132,7 +132,7 @@ end
 
 def trade_pokemon(trainer)
     if trainer.trained_pokemons.size < 1
-        puts "You don't have any pokemon to trade yet, go out and catch some!"
+        puts "You don't have any pokemon to trade yet, go out and catch some!".yellow
     else
     other_trainers = Trainer.all - [trainer]
     trainer_selection = $prompt.select("Which trainer would you like to trade with?".yellow, other_trainers)

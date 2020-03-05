@@ -6,7 +6,7 @@ class TrainedPokemon < ActiveRecord::Base
     has_many :moves, through: :trained_pokemon_moves
     
     def to_s
-        "#{self.nickname} (#{self.pokemon.name})"
+        "#{self.nickname} (#{self.pokemon.name.upcase})"
     end
 
     def get_available_moves
