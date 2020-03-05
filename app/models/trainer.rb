@@ -56,6 +56,10 @@ class Trainer < ActiveRecord::Base
         end
         result
     end
+
+    def get_evolvable_team_members
+        self.trained_pokemons.reset
+        self.trained_pokemons.select { |tp| tp.pokemon.is_evolvable? }
+    end
+
 end
-
-
