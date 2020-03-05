@@ -19,7 +19,7 @@ trainer = Trainer.find_or_create_by(name: name)
 
 while true do
     # Ask the trainer what action they would like to take
-    choices = ["Look for wild pokemon", "View Pokedex", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have","Quit"]
+    choices = ["Look for wild pokemon", "View Pokedex", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have", "Evolve a pokemon on your team","Quit"]
     selection = $prompt.select("#{trainer.name}, what would you like to do now?".yellow, choices)
 
     if selection == "Look for wild pokemon"
@@ -95,6 +95,38 @@ while true do
                 puts trainer.trained_pokemons[check_pokemon_index].trained_moves_names
             end
         end
+
+    elsif selection == "Evolve a pokemon on your team"
+        # Ask which pokemon they'd like to evolve (List the pokemon on their team that can evolve)
+        # If none can evolve, let them know that.
+        evolvable_pokemon = trainer.get_evolvable_team_members
+        if evolvable_pokemon.length == 0
+            puts "None of the pokemon on your team can evolve. Go catch some new pokemon!"
+        else
+            tp_to_evolve = $prompt.select("Which of your pokemon would you like to evolve?", evolvable_pokemon + ['None'])
+            if tp_to_evolve == 'None'
+                next  # If they actually don't want to evolve any, just continue on.
+            end
+
+            # Get the next evolution(s) for the trained_pokeon to evolve
+            next_evolutions = tp_to_evolve.pokemon.next_evolutions
+            
+            # If there is more than one option, have the trainer select the evolution they want
+            if next_evolutions.length > 1
+                next_evolution = $prompt.select("Which evolution?", next_evolutions + ['None'])
+                if next_evolution == 'None'
+                    next  # If they actually don't want to evolve it, just continue on.
+                end
+            else
+                next_evolution = next_evolutions.first
+            end
+
+            # Evolve their pokemon and save it
+            tp_to_evolve.pokemon = next_evolution
+            tp_to_evolve.save
+            puts "Congrats! #{tp_to_evolve.nickname} evolved into #{next_evolution.name.upcase}!" 
+        end
+    
     else
         break
     end
