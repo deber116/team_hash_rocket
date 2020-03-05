@@ -57,19 +57,37 @@ while true do
             t_pokemon = trainer.trained_pokemons[p_selection]
 
             if t_pokemon.trained_moves.count == 4
-                puts "That pokemon already knows 4 moves. You can't teach it anymore"
+                response = $prompt.yes?("That pokemon already knows 4 moves. Would you like to delete one?")
+                if response
+                    move_instances = t_pokemon.trained_moves
+                    move_names = t_pokemon.trained_moves_names
+                    move_hash = Hash[move_names.zip move_instances]
+                    result = $prompt.select("Which move would you like to delete?", move_hash)
+                    binding.pry
+                    result.destroy
+                end
             else 
-                move_names = t_pokemon.get_moves_names.first(10) - t_pokemon.trained_moves_names
-                result = {}
-                move_names.each_with_index {|name, i| result[name] = i }
+                remaining_instances = t_pokemon.remaining_move_choice_instances
+                remaining_names = t_pokemon.remaining_move_choice_names
+                #remaining_move_choice_names = t_pokemon.get_moves_names.first(10) - t_pokemon.trained_moves_names
+                #remaining_move_choice_instances = t_pokemon.get_available_moves - t_pokemon.trained_moves.map {|tm| tm.move}
                 
-                result_index = $prompt.select("Which move would you like to teach this pokemon?", result)
-                selected_move = t_pokemon.pokemon.moves.first(10)[result_index]
-                t_pokemon.add_move(selected_move) 
+                #creates hash of {move_name => move_instance}
+                moves_hash = Hash[remaining_names.zip remaining_instances]
+                
+                #returns move instance that needs to be added
+                selected_move_instance = $prompt.select("Which move would you like to teach this pokemon?", moves_hash)
+                
+                t_pokemon.add_move(selected_move_instance) 
             end
         end
     elsif selection == "Check what moves your pokemon have"
-        
+        if trainer.get_team.count == 0
+            puts "You don't have any members on your team yet. Go catch some pokemon!"
+        else
+            check_pokemon_index = $prompt.select("Which pokemon would you like to check the moves of?",trainer.get_team_choices_hash)
+            puts trainer.trained_pokemons[check_pokemon_index].trained_moves_names
+        end
     else
         break
     end
