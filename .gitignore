@@ -10,4 +10,4 @@ tmp
 *.log
 *.swp
 
-db/*.db
+#db/*.db

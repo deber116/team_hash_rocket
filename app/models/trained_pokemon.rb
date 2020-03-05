@@ -9,19 +9,39 @@ class TrainedPokemon < ActiveRecord::Base
         "#{self.nickname} (#{self.pokemon.name})"
     end
 
+    def get_available_moves
+        self.pokemon.moves.reset
+        self.pokemon.moves.first(10)
+    end
+    #moves that are available to this pokemon from moves table. Filtered for first 10 results
     def get_moves_names
-        move_names = self.pokemon.moves.map {|move| move.name}
+        self.pokemon.moves.reset
+        move_names = self.pokemon.moves.map {|move| move.name}.first(10)
     end
 
+    #ties a given move to the trained_pokemon via the trained_pokemon_moves table
     def add_move(move)
         self.moves << move
     end
 
+    #returns the trained_pokemon's trained moves from the trained_pokemon_moves table
     def trained_moves
+        self.trained_pokemon_moves.reset
         self.trained_pokemon_moves
     end
 
+    #returns an array of strings of the trained moves' names
     def trained_moves_names
         self.trained_moves.map {|trained_move| trained_move.move.name}
+    end
+
+    #returns an array of move name strings that can be assigned to a trained pokemon
+    def remaining_move_choice_names
+        self.get_moves_names.first(10) - self.trained_moves_names
+    end
+
+    #returns an array of move instances that can be assigned to a trained pokemon
+    def remaining_move_choice_instances
+        self.get_available_moves - self.trained_moves.map {|tm| tm.move}
     end
 end
