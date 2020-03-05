@@ -22,4 +22,8 @@ class Pokemon < ActiveRecord::Base
         puts "All #{type.name} type Pokemon:"
         of_type.each { |pokemon| puts "     #{pokemon.name}" }
     end
+    
+    def is_evolvable?
+        self.next_evolutions.length > 0
+    end
 end
