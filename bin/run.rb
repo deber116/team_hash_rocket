@@ -1,5 +1,21 @@
 require_relative '../config/environment'
 
+pikachu = <<-pika
+                                   ,'\\
+    _.----.        ____         ,'  _\\   ___    ___     ____
+_,-'       `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`.
+\\      __    \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |
+ \\.    \\ \\   |  __  |  |/    ,','_  `.  |          | __  |    \\|  |
+   \\    \\/   /,' _`.|      ,' / / / /   |          ,' _`.|     |  |
+    \\     ,-'/  /   \\    ,'   | \\/ / ,`.|         /  /   \\  |     |
+     \\    \\ |   \\_/  |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |
+      \\    \\ \\      /       `-.`.___,-' |  |\\  /| \\      /  | |   |
+       \\    \\ `.__,'|  |`-._    `|      |__| \\/ |  `.__,'|  | |   |
+        \\_.-'       |__|    `-._ |              '-.|     '-.| |   |
+                                `'                            '-._|
+pika
+puts pikachu
+
 puts "Hello! Sorry to keep you waiting! Welcome to the world of POKEMON!
 My name is OAK. People call me the POKEMON PROF.".light_magenta
 
