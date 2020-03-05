@@ -45,4 +45,10 @@ class TrainedPokemon < ActiveRecord::Base
     def remaining_move_choice_instances
         self.get_available_moves - self.trained_moves.map {|tm| tm.move}
     end
+
+    #used to seed trainer pokemon, fills 4 move slots
+    def fill_move_slots
+        moves = get_available_moves.sample(4)
+        moves.each { |move| self.add_move(move) }
+    end
 end
