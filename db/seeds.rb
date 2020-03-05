@@ -120,19 +120,9 @@ def add_pokemon_data_by_evolution_chain_id(evolution_chain_id)
 end
 
 
-100.times do |i| 
+10.times do |i| 
     add_pokemon_data_by_evolution_chain_id(i + 1) 
     sleep(2)  # Sleep 2 seconds to avoid going over our API request rate limit. This is approximate!
-end
-
-25.times do
-    r_t = random_trainer
-    team = Pokemon.all.sample(6)
-    team.each do |poke|
-        poke_name = random_pokemon_nickname
-        t_p = TrainedPokemon.create(nickname: poke_name, trainer: trainer, pokemon: poke)
-        t_p.fill_move_slots
-    end
 end
 
 def random_trainer
@@ -148,4 +138,14 @@ def random_pokemon_nickname
         Faker::Superhero.prefix
         ]
     nicknames.sample
+end
+
+25.times do
+    r_t = random_trainer
+    team = Pokemon.all.sample(6)
+    team.each do |poke|
+        poke_name = random_pokemon_nickname
+        t_p = TrainedPokemon.create(nickname: poke_name, trainer: r_t, pokemon: poke)
+        t_p.fill_move_slots
+    end
 end
