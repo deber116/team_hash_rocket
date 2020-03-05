@@ -7,6 +7,8 @@ Bundler.require
 require 'tty-prompt'
 $prompt = TTY::Prompt.new
 
+require 'colorize'
+
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
 require_all 'lib'
 require_all 'app/models'
