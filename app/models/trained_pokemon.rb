@@ -37,7 +37,8 @@ class TrainedPokemon < ActiveRecord::Base
 
     #returns an array of move name strings that can be assigned to a trained pokemon
     def remaining_move_choice_names
-        self.get_moves_names.first(10) - self.trained_moves_names
+        a_moves = self.get_available_moves.map {|m| m.name}.first(10)
+        a_moves - self.trained_moves_names
     end
 
     #returns an array of move instances that can be assigned to a trained pokemon
