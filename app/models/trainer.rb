@@ -62,4 +62,8 @@ class Trainer < ActiveRecord::Base
         self.trained_pokemons.select { |tp| tp.pokemon.is_evolvable? }
     end
 
+    def to_s 
+        self.name
+    end
+
 end

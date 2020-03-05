@@ -144,7 +144,6 @@ def trade_pokemon(trainer)
     pokemon_to_trade.trainer = trainer_selection
     pokemon_to_trade.save
     trainer_selection.trained_pokemons.reset
-    binding.pry
     end
 end
 

@@ -120,7 +120,7 @@ def add_pokemon_data_by_evolution_chain_id(evolution_chain_id)
 end
 
 
-10.times do |i| 
+100.times do |i| 
     add_pokemon_data_by_evolution_chain_id(i + 1) 
     sleep(2)  # Sleep 2 seconds to avoid going over our API request rate limit. This is approximate!
 end
