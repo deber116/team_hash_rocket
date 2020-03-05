@@ -1,7 +1,7 @@
 def game_loop(trainer)
     while true do
         # Ask the trainer what action they would like to take
-        choices = ["Look for wild pokemon", "View Pokedex", "View your team of pokemon","Teach moves to pokemon on your team","Check what moves your pokemon have", "Evolve a pokemon on your team","Quit"]
+        choices = ["Look for wild pokemon", "View Pokedex", "View your team of pokemon","Teach moves to pokemon on your team", "Check what moves your pokemon have", "Evolve a pokemon on your team", "Trade one of your pokemon with another trainer","Quit"]
         selection = $prompt.select("#{trainer.name}, what would you like to do now?".yellow, choices)
     
         if selection == "Look for wild pokemon"
@@ -17,6 +17,9 @@ def game_loop(trainer)
             
         elsif selection == "Check what moves your pokemon have"
             check_pokemon_moves(trainer)
+
+        elsif selection == "Trade one of your pokemon with another trainer"
+            trade_pokemon(trainer)
     
         elsif selection == "Evolve a pokemon on your team"
             # Ask which pokemon they'd like to evolve (List the pokemon on their team that can evolve)
@@ -124,6 +127,24 @@ def check_pokemon_moves(trainer)
             puts "Here are the moves that #{t_pokemon.nickname} knows.".yellow
             puts trainer.trained_pokemons[check_pokemon_index].trained_moves_names
         end
+    end
+end
+
+def trade_pokemon(trainer)
+    if trainer.trained_pokemons.size < 1
+        puts "You don't have any pokemon to trade yet, go out and catch some!"
+    else
+    other_trainers = Trainer.all - [trainer]
+    trainer_selection = $prompt.select("Which trainer would you like to trade with?".yellow, other_trainers)
+    pokemon_selection = $prompt.select("Which of #{trainer_selection.name}'s pokemon would you like to trade?".yellow, trainer_selection.trained_pokemons)
+    pokemon_to_trade = $prompt.select("Which of your pokemon would you like to swap with this #{pokemon_selection}?".yellow, trainer.trained_pokemons)
+    pokemon_selection.trainer = trainer
+    pokemon_selection.save
+    trainer.trained_pokemons.reset
+    pokemon_to_trade.trainer = trainer_selection
+    pokemon_to_trade.save
+    trainer_selection.trained_pokemons.reset
+    binding.pry
     end
 end
 
