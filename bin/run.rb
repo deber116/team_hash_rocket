@@ -63,7 +63,7 @@ while true do
                     move_names = t_pokemon.trained_moves_names
                     move_hash = Hash[move_names.zip move_instances]
                     result = $prompt.select("Which move would you like to delete?", move_hash)
-                    binding.pry
+                    #binding.pry
                     result.destroy
                 end
             else 
@@ -79,6 +79,7 @@ while true do
                 selected_move_instance = $prompt.select("Which move would you like to teach this pokemon?", moves_hash)
                 
                 t_pokemon.add_move(selected_move_instance) 
+                #binding.pry
             end
         end
     elsif selection == "Check what moves your pokemon have"
