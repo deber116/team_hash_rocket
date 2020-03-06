@@ -6,7 +6,8 @@ A command line app for finding, catching, training and trading Pokemon.
 
 
 ### Install
--
+
+---
 
 Clone the repo.
 
@@ -47,7 +48,8 @@ database: db/development.db
 
 
 ### Run
--
+
+---
 
 Start the CLI.
 
@@ -57,7 +59,8 @@ ruby bin/run.rb
 
 
 ### Troubleshooting
--
+
+---
 
 #### Database
 
