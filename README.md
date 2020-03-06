@@ -7,7 +7,7 @@ A command line app for finding, catching, training and trading Pokemon.
 
 ### Install
 
----
+--
 
 Clone the repo.
 
@@ -49,18 +49,18 @@ database: db/development.db
 
 ### Run
 
----
+--
 
 Start the CLI.
 
 ```
-ruby bin/run.rb
+$ ruby bin/run.rb
 ```
 
 
 ### Troubleshooting
 
----
+--
 
 #### Database
 
@@ -78,9 +78,9 @@ The application is backed by a sqlite database: `db/development.db`. This should
 	```
 	$ rake db:migrate
 	== 1 CreateTrainers: migrating ================================================
--- create_table(:trainers)
-   -> 0.0006s
-== 1 CreateTrainers: migrated (0.0006s) =======================================
+	-- create_table(:trainers)
+       -> 0.0006s
+	== 1 CreateTrainers: migrated (0.0006s) =======================================
 	...
 	```
 	
