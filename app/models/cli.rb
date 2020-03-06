@@ -11,10 +11,14 @@ def game_loop(trainer)
             view_pokedex(trainer)
     
         elsif selection == "View your team of pokemon"
-            trainer.list_team
+            if trainer.trained_pokemons.count == 0
+                puts "You don't have any members on your team yet. Go catch some pokemon!".red
+            else
+                trainer.list_team
+            end
         elsif selection == "Teach moves to pokemon on your team"
             teach_pokemon_moves(trainer)
-            
+
         elsif selection == "Check what moves your pokemon have"
             check_pokemon_moves(trainer)
 
@@ -25,8 +29,10 @@ def game_loop(trainer)
             # Ask which pokemon they'd like to evolve (List the pokemon on their team that can evolve)
             # If none can evolve, let them know that.
             evolvable_pokemon = trainer.get_evolvable_team_members
-            if evolvable_pokemon.length == 0
-                puts "None of the pokemon on your team can evolve. Go catch some new pokemon!".yellow
+            if trainer.trained_pokemons.count == 0
+                puts "You don't have any members on your team yet. Go catch some pokemon!".red
+            elsif evolvable_pokemon.length == 0
+                puts "None of the pokemon on your team can evolve. Go catch some new pokemon!".red
             else
                 tp_to_evolve = $prompt.select("Which of your pokemon would you like to evolve?".yellow, evolvable_pokemon + ['None'])
                 if tp_to_evolve == 'None'
@@ -61,7 +67,7 @@ end
 def look_for_wild_pokemon(trainer)
     # Return a random pokemon from the db
     pokemon = Pokemon.all.sample
-    response = $prompt.yes?("A wild #{pokemon.name} appeared! Do you want to catch it?".light_green)
+    response = $prompt.yes?("A wild #{pokemon.name.upcase} appeared! Do you want to catch it?".light_green)
 
     if response == true
         trainer.catch(pokemon)
@@ -78,14 +84,14 @@ def view_pokedex(trainer)
             elsif command == "View pokemon by type"
                 types = Type.list_types_by_name
                 type_str = $prompt.select("Which type would you like to view?".yellow, types)
-                type = Type.find_by(name: type_str)
+                type = Type.find_by(name: type_str.downcase)
                 Pokemon.list_all_by_type(type)
             end
 end
 
 def teach_pokemon_moves(trainer)
     if trainer.get_team.count == 0
-        puts "You don't have any members on your team yet. Go catch some pokemon!".yellow
+        puts "You don't have any members on your team yet. Go catch some pokemon!".red
 
     else
         p_selection = $prompt.select("Which pokemon on your team would you like to teach a move?".yellow, trainer.get_team_choices_hash)
@@ -117,7 +123,7 @@ end
 
 def check_pokemon_moves(trainer)
     if trainer.get_team.count == 0
-        puts "You don't have any members on your team yet. Go catch some pokemon!".yellow
+        puts "You don't have any members on your team yet. Go catch some pokemon!".red
     else
         check_pokemon_index = $prompt.select("Which pokemon would you like to check the moves of?".yellow,trainer.get_team_choices_hash)
         t_pokemon = trainer.trained_pokemons[check_pokemon_index]
@@ -132,7 +138,7 @@ end
 
 def trade_pokemon(trainer)
     if trainer.trained_pokemons.size < 1
-        puts "You don't have any pokemon to trade yet, go out and catch some!".yellow
+        puts "You don't have any pokemon to trade yet, go out and catch some!".red
     else
     other_trainers = Trainer.all - [trainer]
     trainer_selection = $prompt.select("Which trainer would you like to trade with?".yellow, other_trainers)
