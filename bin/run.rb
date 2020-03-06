@@ -14,7 +14,7 @@ _,-'       `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`.
         \\_.-'       |__|    `-._ |              '-.|     '-.| |   |
                                 `'                            '-._|
 pika
-puts pikachu
+puts pikachu.yellow
 
 puts "Hello! Sorry to keep you waiting! Welcome to the world of POKEMON!
 My name is OAK. People call me the POKEMON PROF.".light_magenta

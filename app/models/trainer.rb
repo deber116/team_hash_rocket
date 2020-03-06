@@ -15,14 +15,14 @@ class Trainer < ActiveRecord::Base
             
             if response == true
                 self.release
-                puts "You caught a #{pokemon.name}!".light_green
+                puts "You caught a #{pokemon.name.upcase}!".light_green
                 self.add_trained_pokemon(pokemon)
             else 
                 puts "The pokemon got away!".red
             end
         
         else
-            puts "You caught a #{pokemon.name}!".light_green
+            puts "You caught a #{pokemon.name.upcase}!".light_green
             self.add_trained_pokemon(pokemon)
         end
     end
