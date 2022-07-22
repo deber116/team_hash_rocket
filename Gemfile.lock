@@ -54,7 +54,7 @@ GEM
       pastel (~> 0.7.0)
       tty-cursor (~> 0.4.0)
       wisper (~> 1.6.1)
-    tzinfo (1.2.5)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     wisper (1.6.1)
 
